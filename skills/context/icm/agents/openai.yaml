@@ -1,0 +1,4 @@
+interface:
+  display_name: "Interpretable Context Methodology"
+  short_description: "Build and audit folder-based agent context (ICM)"
+  default_prompt: "Use $icm to design, audit, or maintain a routed Markdown context (ICM) architecture for this project."

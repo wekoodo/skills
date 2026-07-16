@@ -1,0 +1,24 @@
+# OS / editor
+.DS_Store
+*.swp
+*~
+
+# Local agent projections (re-installable; not source of truth)
+.agents/
+.claude/
+.codex/
+.cursor/
+.continue/
+.windsurf/
+.gemini/
+.factory/
+.opencode/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Node (if tooling added later)
+node_modules/
