@@ -3,11 +3,6 @@
   "notGrouped": "bottom",
   "groupings": [
     {
-      "title": "Payments",
-      "description": "Payment-method pricing, compliance, and checkout-related domain skills.",
-      "skills": ["dual-pricing"]
-    },
-    {
       "title": "Context",
       "description": "Agent context architecture, routing, and folder-based workflow structure.",
       "skills": ["icm"]

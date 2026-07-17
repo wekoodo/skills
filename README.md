@@ -17,7 +17,6 @@ npx skills add wekoodo/skills --list
 
 # One skill
 npx skills add wekoodo/skills --skill icm
-npx skills add wekoodo/skills --skill dual-pricing
 
 # Shorthand
 npx skills add wekoodo/skills@icm
@@ -47,21 +46,13 @@ Build, audit, and maintain folder-based agent context (ICM): entrypoints, routin
 
 Method introduced by Jake Van Clief, David McDermott, and Eduba (University of Edinburgh): [arXiv:2603.16021](https://arxiv.org/abs/2603.16021). This skill packages operational guidance; credit for the methodology belongs to the paper authors.
 
-### Payments
-
-#### `dual-pricing` — Dual Pricing
-
-Domain knowledge for payment-method pricing: dual pricing vs cash discount vs surcharge, card network rules, disclosure/receipt requirements, legal landscape, and implementation splits (crawlers vs catalog syncs).
-
-**Use when:** any feature involving dual pricing, cash vs card prices, surcharges, cash discounts, fee recovery, or network compliance — any stack.
-
 ## Skill layout (skills.sh contract)
 
 Published skills live under `skills/<category>/<skill-name>/` and are self-contained:
 
 ```text
 skills/
-  <category>/              # e.g. payments, context — pack organization only
+  <category>/              # e.g. context — pack organization only
     <skill-name>/
       SKILL.md             # required — name + description + instructions
       scripts/             # optional
@@ -69,13 +60,15 @@ skills/
       assets/              # optional
 ```
 
-Install name is the **skill** folder / frontmatter `name` (e.g. `dual-pricing`), not the category. Categories group the monorepo and the skills.sh pack page (`skills.sh.json`); they do not change install commands.
+Install name is the **skill** folder / frontmatter `name` (e.g. `icm`), not the category. Categories group the monorepo and the skills.sh pack page (`skills.sh.json`); they do not change install commands.
 
 ## Repo maintenance (ICM)
 
 This repository is itself maintained with a light [Interpretable Context Methodology](https://arxiv.org/abs/2603.16021) layout so agents can add and revise skills consistently. That structure wraps authoring workflow; it does **not** replace the `skills/` catalog shape above.
 
 See [AGENTS.md](./AGENTS.md) and [CONTEXT.md](./CONTEXT.md).
+
+Local multi-repo workspace (public + private packs side by side): parent of this folder — open `wekoodo-ai-skills.code-workspace` one level up.
 
 ## License
 

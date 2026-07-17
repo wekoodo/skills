@@ -21,10 +21,9 @@ skills/
 
 | Category | Use for |
 | --- | --- |
-| `payments` | Payment-method pricing, processors, checkout/compliance domain skills |
 | `context` | Agent context architecture, ICM, routing/structure meta-skills |
 
-Add a new category folder when a third bucket is clearly needed; also add it to `skills.sh.json` groupings and README.
+Payment-method / dual-pricing skills live in the **private** sibling pack (`../private`), not here. Add a new public category folder only when a public skill needs it; also add it to `skills.sh.json` groupings and README.
 
 ### Rules
 
@@ -75,7 +74,7 @@ Optional:
 ## Attribution
 
 - If the skill operationalizes someone else’s method or paper, credit them in frontmatter metadata **and** a short Attribution section (or quiet line under the title). Do not imply Wekoodo invented the method.
-- Wekoodo-original domain skills (e.g. `dual-pricing`) use `metadata.author: wekoodo` without a third-party Attribution block unless sources warrant it.
+- Wekoodo-original public domain skills use `metadata.author: wekoodo` without a third-party Attribution block unless sources warrant it. Private domain skills belong in `../private`, not this pack.
 
 ## What does not go under `skills/`
 
