@@ -1,10 +1,10 @@
 ---
 name: icm
-description: "Use when building, auditing, or maintaining a folder-based agent context architecture (Interpretable Context Methodology / ICM) — AGENTS.md/CLAUDE.md entrypoints, CONTEXT.md routing, numbered stage pipelines OR numbered reference libraries (rosters), references, working artifacts, and review gates. Use when a project wants portable, model/harness-agnostic, plain-markdown agent context instead of monolithic prompts, and whenever structure should be kept ICM-compliant as it grows."
+description: "Use when building, auditing, or maintaining a folder-based agent context architecture (Interpretable Context Methodology / ICM) — AGENTS.md/CLAUDE.md entrypoints, CONTEXT.md routing, numbered stage pipelines OR numbered reference libraries (rosters), references, working artifacts, and review gates. Use when a project wants portable, model/harness-agnostic, plain-markdown agent context instead of monolithic prompts, and whenever structure should be kept ICM-compliant as it grows. Certifies layer properties rather than filenames: when another installed skill pack owns an overlapping path (e.g. a domain-glossary CONTEXT.md or a process pack's plan tree), ICM defers to that structure and audits in coexistence mode."
 license: MIT
 metadata:
   author: wekoodo
-  version: "1.0"
+  version: "1.1"
   based_on: "Jake Van Clief, David McDermott, Eduba (University of Edinburgh) — Interpretable Context Methodology, arXiv:2603.16021"
   paper: "https://arxiv.org/abs/2603.16021"
 ---
@@ -32,11 +32,36 @@ A project may have a pipeline, a library, both, or neither. **A numbered folder 
 
 > Example: a live "board meeting" system is pure ICM. Layer 2 is the *meeting lifecycle* (intake → deliberation → minutes). Layer 3 is the *advisor roster library*, selected per topic. Layer 4 is the per-meeting artifacts. The conversational feel of deliberation is an execution-style choice, not an architectural violation.
 
+## Coexistence and deferral
+
+ICM certifies **properties** — the five layers, stable/working separation, a reviewable control surface — not filenames. Other installed skill packs may own the same paths under different contracts: a domain-modeling pack may own root `CONTEXT.md` as a term **glossary**; a process pack may own multi-step execution under its own tree (e.g. `docs/superpowers/plans/` and `specs/`). When another pack clearly owns a path's role, **defer**: map ICM layers onto the existing structure and add only what is missing. Never rewrite a path's role to fit ICM's preferred names.
+
+Classify by **content shape first**, pack fingerprints second (conventions drift; content is what the file actually is). Installed-skill lists are a supporting clue for you during Explore, not something the audit script can see:
+
+- **Router-shaped** `CONTEXT.md`/`CONTEXT-MAP.md` — task tables, layer/path pointers, "where do I go" → Layer 1.
+- **Glossary-shaped** `CONTEXT.md` — `## Language`, `**Term**:` definitions, `_Avoid_:` notes, no routing → Layer 3 domain language. A multi-glossary `CONTEXT-MAP.md` (bounded-context index with links to per-context glossaries) → Layer 3 index.
+- **Hybrid** (both in one file) — say so and propose a split; do not silently pick a side.
+- **Foreign plan/spec tree in active use** → the project's control surface (Layer 4 working, or declared product under `docs/`).
+
+State the detected mode before proposing changes: `icm-native`, `coexist-glossary`, `coexist-process`, or `coexist-mixed`.
+
+Deferral rules:
+
+1. **Never convert a glossary-shaped `CONTEXT.md` into a router (or the reverse) without explicit user approval.** These are the destructive failure modes coexistence exists to prevent.
+2. When root `CONTEXT.md` is glossary-owned, put Layer-1 routing at — in order of preference — `docs/agents/routing.md`; a `## Task routing` section in `AGENTS.md`; root `TASK-MAP.md`. Do **not** use `CONTEXT-MAP.md` as the escape hatch: glossary packs use that name for multi-glossary indexes (same homonym trap).
+3. Do not add `stages/` when another pack already owns multi-step execution — its plans, specs, or tickets are the control point. Build an ICM pipeline only when the user asks for one.
+4. Treat foreign stable artifacts (glossaries, `docs/adr/`, `docs/agents/*`) as Layer 3. Never rename, delete, or "clean up" them to fit ICM.
+5. Preserve existing `AGENTS.md`/`CLAUDE.md` content, including other packs' setup blocks; update the canonical file in place, never append duplicate routing blocks.
+6. Ephemeral outputs some packs deliberately keep out of the workspace (e.g. handoffs to OS temp) stay out; do not force them into in-repo `handoffs/`.
+
+Greenfield, or no foreign ownership detected: keep the paper-aligned layout (root `CONTEXT.md` router, optional `stages/`). See [icm-patterns.md](references/icm-patterns.md) § Coexistence Profiles for the mapping table; the audit script performs the same shape classification and reports the mode.
+
 ## Workflow
 
 ### 1. Explore existing context
 
 - Read root `AGENTS.md`, `CLAUDE.md`, `README.md`, `CONTEXT.md`, `CONTEXT-MAP.md`, `docs/agents/`, `handoffs/`, `_config/`, `.cursor/rules`, `.github/copilot-instructions.md`, and local scripts only as relevant.
+- Classify any root `CONTEXT.md`/`CONTEXT-MAP.md` by content shape **before** treating it as a Layer 1 router, and check for foreign plan/spec trees — see [Coexistence and deferral](#coexistence-and-deferral). Detect foreign ownership before proposing any rename or restructure.
 - Identify the canonical Layer-0 entrypoint. If a tool-specific file is only a shim (e.g. `CLAUDE.md` importing `AGENTS.md`), preserve the shim and edit the canonical file.
 - Notice ignored/generated projection directories (`.claude/`, `.codex/`, `.agents/`). Do not duplicate canonical content into them — they are re-installable tooling, not workspace content.
 
@@ -74,7 +99,7 @@ A project may have a pipeline, a library, both, or neither. **A numbered folder 
 
 ### 6. Validate
 
-- Run `python <skill>/scripts/audit_routed_context.py <project-root>`. It recognizes pipelines, reference libraries, recursive routing, and Layer-4 areas; a complete library-only project audits clean.
+- Run `python <skill>/scripts/audit_routed_context.py <project-root>`. It recognizes pipelines, reference libraries, recursive routing, and Layer-4 areas; a complete library-only project audits clean. It classifies router- vs glossary-shaped context files and reports the coexistence mode — a foreign-owned but property-complete repo audits clean, an honest gap (e.g. glossary owns `CONTEXT.md` and no alternate router exists) is a warning.
 - Manually check: each stage has reviewable output, a scoped input list, no irrelevant context loading, and no hidden dependency on one model or harness.
 - If the project keeps project-specific ICM decisions in a committed reference file (e.g. `_config/shared/icm-conventions.md`), audit against it too.
 

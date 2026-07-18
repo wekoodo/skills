@@ -44,6 +44,10 @@ Build, audit, and maintain folder-based agent context (ICM): entrypoints, routin
 
 **Use when:** designing or auditing agent context architecture; keeping a project portable and harness-agnostic; growing structure without monolithic prompts.
 
+Compatible with domain-glossary and process skill packs: when another pack owns a path (e.g. a glossary `CONTEXT.md` or a plan/spec tree), ICM certifies layer properties instead of forcing its own filenames, and the audit reports the coexistence mode.
+
+> **Changed in 1.1:** the audit no longer counts a domain glossary as a Layer 1 router. A repo where a glossary owns `CONTEXT.md` previously audited green ("router found") — it now gets an actionable warning pointing to an alternate routing location (`docs/agents/routing.md`, a `## Task routing` section in `AGENTS.md`, or `TASK-MAP.md`). Exit codes are unchanged.
+
 Method introduced by Jake Van Clief, David McDermott, and Eduba (University of Edinburgh): [arXiv:2603.16021](https://arxiv.org/abs/2603.16021). This skill packages operational guidance; credit for the methodology belongs to the paper authors.
 
 ## Skill layout (skills.sh contract)

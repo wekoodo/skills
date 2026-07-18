@@ -199,6 +199,63 @@ Stop after writing the output. The human may edit `output/draft.md` before the n
 - Let humans branch between stages when judgment is needed.
 - When a user repeatedly edits the same kind of output, change the source contract or reference file.
 
+## Coexistence Profiles
+
+ICM certification means the layer **properties** hold, not that the repo uses ICM's preferred filenames. When another installed skill pack owns a path's role, map ICM layers onto its structure and add only missing properties. The five-layer model stays primary; coexistence is operational guidance on top of it, like roster libraries.
+
+### Property table (what "certified" means under deferral)
+
+| Property | Intent | Foreign-friendly realization |
+| --- | --- | --- |
+| Layer 0 | Identity + harness entry | Existing `AGENTS.md`/`CLAUDE.md`, including other packs' setup blocks |
+| Layer 1 | "Where do I go?" for common tasks | Router at preferred names when free; else an alternate location (below) |
+| Layer 3 | Stable constraints | `_config/`, `references/`, domain glossaries, `docs/adr/`, `docs/agents/*` |
+| Layer 4 | Per-run / working (or declared product) | `handoffs/`, `output/`, foreign plan/spec trees (e.g. `docs/superpowers/{specs,plans}/`) |
+| Control point | Scoped multi-step work | ICM stages **or** a foreign pack's plans/tickets — do not force one |
+| Reviewable artifacts | Diffable, human-editable outputs | Any durable path the controlling process writes |
+| Separation | Stable vs working not mixed | Glossaries/ADRs not inside per-run folders; plans not mixed into identity files |
+
+### Content-shape classification (primary signal)
+
+Classify contested files by what they contain, not by which pack you believe installed them — pack conventions drift; content is authoritative. Fingerprints of a specific pack (skill names, characteristic paths) only add confidence and help name the situation.
+
+| Shape | Signals | Layer |
+| --- | --- | --- |
+| Router | Task tables with path pointers, "Layer" references, "where do I go" style maps | Layer 1 |
+| Glossary | `## Language` heading, `**Term**:` definition lines, `_Avoid_:` notes, no routing tables | Layer 3 domain language |
+| Multi-glossary index | `CONTEXT-MAP.md` linking multiple per-context glossaries, "Relationships"/bounded contexts | Layer 3 index |
+| Hybrid | Both glossary and routing content in one file | Layer 1 + Layer 3 — report honestly, propose a split, never silently pick a side |
+| Foreign control surface | Plan/spec trees in active use without `stages/` | Layer 4 (or declared product) |
+
+### Coexistence mapping (default deferral)
+
+| Foreign artifact | ICM layer | ICM must not |
+| --- | --- | --- |
+| Glossary-shaped root `CONTEXT.md` | Layer 3 language | Convert to a task router; add routing tables; strip terms |
+| Multi-glossary `CONTEXT-MAP.md` | Layer 3 index | Treat as a Layer 1 task router without reading intent |
+| `docs/adr/`, `docs/agents/*` | Layer 3 | Delete or rename "to fit ICM" |
+| Plan/spec trees (e.g. `docs/superpowers/`) | Layer 4 working or declared product | Invent a parallel `stages/` unless the user asks for an ICM pipeline |
+| Deliberately-ephemeral outputs (e.g. handoffs to OS temp) | Out-of-band compaction | Force into in-repo `handoffs/` |
+
+### Layer-1 escape hatch (when root `CONTEXT.md` is glossary-owned)
+
+Prefer, in order:
+
+1. `docs/agents/routing.md` (or `docs/agents/task-map.md`) — sits with other agent config; expected by both ecosystems; clear name.
+2. A `## Task routing` (or `## Context routing`) section in `AGENTS.md` — fine for small repos; keep it a table of scoped paths, not a second identity dump.
+3. `TASK-MAP.md` at repo root — only if the user wants a highly visible root file.
+
+Do **not** use `CONTEXT-MAP.md` as the escape hatch: glossary packs use that exact name for multi-glossary indexes — the same homonym trap coexistence exists to avoid.
+
+### Modes
+
+Name the detected situation by shape, not by pack author:
+
+- `icm-native` — no foreign ownership; paper-aligned layout applies.
+- `coexist-glossary` — a glossary pack owns `CONTEXT.md`/`CONTEXT-MAP.md`; routing lives at an alternate location.
+- `coexist-process` — a process pack owns multi-step execution; its plan/spec tree is the control surface.
+- `coexist-mixed` — both.
+
 ## Anti-Patterns
 
 - One giant prompt or context file that every task loads.
