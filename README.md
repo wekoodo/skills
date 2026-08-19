@@ -50,6 +50,18 @@ Compatible with domain-glossary and process skill packs: when another pack owns 
 
 Method introduced by Jake Van Clief, David McDermott, and Eduba (University of Edinburgh): [arXiv:2603.16021](https://arxiv.org/abs/2603.16021). This skill packages operational guidance; credit for the methodology belongs to the paper authors.
 
+### Writing
+
+#### `google-doc-style` — Google developer documentation style
+
+Make reader-facing prose follow the [Google Developer Documentation Style Guide](https://developers.google.com/style): second person, active voice, present tense, sentence-case headings, precise word choices, and inclusive, globally readable language. Ships a distilled core rule set plus six reference files (grammar, punctuation, formatting, a ~200-entry word list, inclusive/accessible writing, and code-in-text conventions).
+
+**Use when:** you want explanations, answers, summaries, READMEs, reports, and docs written in a consistent documentation style. Prose only — the skill never restyles code, identifiers, code comments, commit messages, or configuration.
+
+In benchmark runs, output written with the skill passed 96% of the guide's verifiable rules versus 63% without it.
+
+Distilled from the Google Developer Documentation Style Guide, created by Google LLC and used under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
+
 ## Skill layout (skills.sh contract)
 
 Published skills live under `skills/<category>/<skill-name>/` and are self-contained:

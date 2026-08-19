@@ -6,6 +6,11 @@
       "title": "Context",
       "description": "Agent context architecture, routing, and folder-based workflow structure.",
       "skills": ["icm"]
+    },
+    {
+      "title": "Writing",
+      "description": "Prose style and documentation quality for agent output.",
+      "skills": ["google-doc-style"]
     }
   ]
 }
