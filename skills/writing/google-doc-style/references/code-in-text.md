@@ -77,4 +77,6 @@ Grammar around code items:
 
 ## Example values
 
-Never real data. Domains: example.com, altostrat.com. Emails: dana@example.com. People: gender-neutral names (Alex, Dana, Quinn) with they/them. Companies: Example Organization. Phones: 800-555-0100 to 0199. IPv4: 192.0.2.0/24, 198.51.100.0/24, 203.0.113.0/24; IPv6: 2001:db8::/32. Resource names: descriptive (`frontend-development`), never `foo`, `bar`, or `baz`.
+In **invented samples** — documentation, tutorials, fake walkthroughs, placeholder snippets — never use real data. Domains: example.com, altostrat.com. Emails: dana@example.com. People: gender-neutral names (Alex, Dana, Quinn) with they/them. Companies: Example Organization. Phones: 800-555-0100 to 0199. IPv4: 192.0.2.0/24, 198.51.100.0/24, 203.0.113.0/24; IPv6: 2001:db8::/32. Resource names: descriptive (`frontend-development`), never `foo`, `bar`, or `baz`.
+
+When the user or environment already supplied facts about their situation, project, or data, use those facts in reader-facing answers, reports, plans, and other artifacts that consume them. Do not anonymize or substitute sample values unless they ask. A single artifact can mix both: keep supplied facts, and still use example.com (and the ranges above) in any invented snippet.
