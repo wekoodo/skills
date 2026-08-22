@@ -4,24 +4,26 @@ description: "Write all reader-facing prose in the style of the Google Developer
 license: MIT
 metadata:
   author: wekoodo
-  version: "1.0"
+  version: "1.1"
   based_on: "Google Developer Documentation Style Guide (Google LLC), CC BY 4.0"
   source: "https://developers.google.com/style"
 ---
 
 # Google developer documentation style
 
-Write reader-facing prose the way the Google Developer Documentation Style Guide prescribes: like a knowledgeable friend — conversational, direct, and precise, for a global audience. This skill distills that guide. Follow the core rules below in every response; open the reference files when a specific situation calls for detail.
+Write reader-facing prose the way the Google Developer Documentation Style Guide prescribes: like a knowledgeable friend — conversational, direct, and precise, for a global audience. This skill distills that guide. Follow the core rules below in reader-facing prose (see Scope); open the reference files when a specific situation calls for detail.
 
 ## Scope
 
-This skill governs **prose a person reads**: chat answers and explanations, summaries, reports, READMEs, docs, tutorials, and how-tos.
+This skill governs **prose a person reads**: chat answers and explanations, summaries, reports, READMEs, docs, tutorials, and how-tos. Word-list substitutions apply to that prose only — never to identifiers, flags, paths, or quoted terms from the project.
 
 It never changes:
 
 - Code, identifiers, string literals, or code comments — write those to match the surrounding codebase.
 - Commit messages, configuration files, or machine-read output.
 - Quoted material, error messages, or command output that you report verbatim.
+- Machine-parsed markdown (for example `AGENTS.md` and other agent contracts). Match the file's existing voice and structure; do not restyle it as public documentation.
+- Tool-call arguments.
 
 When rules conflict, the order of precedence is: an explicit style request from the user, then the constraints of your environment (for example, response-length or formatting rules from your system prompt), then this skill. This skill shapes *how* you write, not *how much* — keep whatever brevity your environment requires.
 
@@ -29,7 +31,7 @@ When rules conflict, the order of precedence is: an explicit style request from 
 
 Aim for the middle path: not stuffy, not silly. A knowledgeable friend explains things plainly without performing.
 
-- Use second person ("you"), not first person plural ("we"). "The user" means the reader's users, never the reader.
+- Use second person ("you"), not first person plural ("we"). "The user" means the reader's users, never the reader. If the user or environment sets a different grammatical person (team or product "we", a defined persona, legal first person), keep it.
 - Be conversational without being frivolous: contractions are fine; slang, hype, pop-culture references, and exclamation marks are not.
 - Don't call anything "simple," "easy," "quick," or "straightforward" — if the reader finds it hard, you've told them the problem is them.
 - Don't say "please" in instructions: "Click **Save**," not "Please click **Save**."
@@ -103,18 +105,20 @@ When prose refers to code or UI — placeholders, command-line syntax, UI naviga
 - Never inflect a code item: "send a `POST` request," not "`POST` the data"; "`Intent` objects," not "`Intent`s."
 - Placeholders are descriptive `UPPERCASE_WITH_UNDERSCORES`, each explained with "Replace the following:" — never `foo` or `x`.
 
-Example values in prose and samples are never real: example.com, dana@example.com, Example Organization, 192.0.2.0/24, gender-neutral names (Alex, Dana, Quinn).
+Invented sample values are never real: example.com, dana@example.com, Example Organization, 192.0.2.0/24, gender-neutral names (Alex, Dana, Quinn). Facts the user or environment already supplied stay as given — do not replace them with sample data.
 
 ## Self-check
 
-Before finishing, scan your prose for the most common violations:
+Before finishing, scan for leakage first, then the most common style slips:
 
-1. An exclamation mark, or the words "simply," "easy," "easily," "just," "please," or "currently."
-2. A Title Case Heading, or a heading starting with an -ing verb.
-3. Passive voice hiding the actor, or "will" where present tense works.
-4. "We" where it should be "you"; "should" where it should be "must" or "can."
-5. Code, a filename, or a command not in code font; bold used for emphasis.
-6. A missing serial comma, or a bare URL in running text.
+1. Did I apply this skill outside reader-facing prose (see Scope)? If yes, revert that.
+2. Did I replace facts the user or environment supplied with sample or example data? If yes, restore the real facts.
+3. An exclamation mark, or the words "simply," "easy," "easily," "just," "please," or "currently."
+4. A Title Case Heading, or a heading starting with an -ing verb.
+5. Passive voice hiding the actor, or "will" where present tense works.
+6. "We" where the reader is "you" and no user or environment voice says otherwise; "should" where it should be "must" or "can."
+7. Code, a filename, or a command not in code font; bold used for emphasis.
+8. A missing serial comma, or a bare URL in running text.
 
 ## Attribution
 
