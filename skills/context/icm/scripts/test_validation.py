@@ -51,6 +51,13 @@ class ValidationTests(unittest.TestCase):
         self.assertIn('warn: Missing working input: run.md',text)
         self.assertNotIn('warn: Missing future',text)
         self.assertNotIn('warn: Missing optional',text)
+    def test_routing_table_code_and_bare_paths(self):
+        self.write('CONTEXT.md', '# Router\n## Task routing\n| Task | Go to |\n|---|---|\n| Rules | `missing.md` |\n| Other | other.md |\n| Scoped | the owner listed by the contract |\n')
+        text=self.messages()
+        self.assertIn('Missing route: missing.md',text)
+        self.assertIn('Missing route: other.md',text)
+        self.assertIn('Routing cell is prose',text)
+
     def test_unsupported_input_table_reported(self):
         self.write('cycles/CONTEXT.md', '# Contract\n## Inputs\n| Resource | Read |\n|---|---|\n| Rule | prose only |\n')
         self.assertIn('Input table has no recognized', self.messages())

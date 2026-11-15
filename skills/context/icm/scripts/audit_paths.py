@@ -120,7 +120,7 @@ def audit_paths(root, findings, *, routers=(), histories=(), execution=False):
         text = active_text(source.read_text(encoding='utf-8-sig', errors='replace'))
         if source.name in ('CONTEXT.md', 'CONTEXT-MAP.md') and classify_context_file(text) in ('glossary', 'glossary-index'):
             continue
-        section, depth, table_path, subgroup = '', 0, None, ''
+        section, depth, table_path, subgroup, route_column = '', 0, None, '', None
         for line in text.splitlines():
             heading = HEADING.match(line)
             if heading:
@@ -129,6 +129,7 @@ def audit_paths(root, findings, *, routers=(), histories=(), execution=False):
                     table_path, subgroup = None, ''
                 else:
                     subgroup = heading[2].lower()
+                route_column = None
                 continue
             in_inputs = section.startswith('inputs')
             tokens = []
@@ -176,6 +177,24 @@ def audit_paths(root, findings, *, routers=(), histories=(), execution=False):
                 check(source, target, role=role, historical=historical)
             if section.startswith('outputs'):
                 continue
+            # Routing tables can use backticks or bare paths, not only Markdown links.
+            if not in_inputs and line.strip().startswith('|'):
+                cells = [c.strip() for c in line.strip().strip('|').split('|')]
+                header = next((i for i, c in enumerate(cells) if c.lower() in ('go to', 'target', 'route', 'location')), None)
+                if header is not None:
+                    route_column = header
+                elif route_column is not None and len(cells) > route_column:
+                    cell = cells[route_column]
+                    if not LINK.search(cell) and not re.fullmatch(r'[-: ]+', cell):
+                        paths = TICK.findall(cell) or ([cell] if re.fullmatch(r'[\w./#%-]+', cell) else [])
+                        for target in paths:
+                            if pathish(target):
+                                check(source, target, historical=historical)
+                        if not paths:
+                            unresolved += 1
+                            emit('info', 'Routing cell is prose; inspect targets manually.', source)
+            elif line.strip():
+                route_column = None
             for match in LINK.finditer(line):
                 if match[1] not in targets:
                     check(source, match[1], historical=historical)
