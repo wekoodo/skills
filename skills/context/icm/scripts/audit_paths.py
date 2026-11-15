@@ -92,7 +92,7 @@ def audit_paths(root, findings, *, routers=(), histories=(), execution=False):
         if re.match(r'^(?:https?|mailto|tel):', target, re.I):
             return
         level = 'info' if historical else 'warn'
-        if any(c in target for c in '{}<>*?|') or target.startswith(('~', '/', '\\')) or re.match(r'^[\w+.-]+:', target):
+        if any(c in target for c in '{}<>[]*?|') or target.startswith(('~', '/', '\\')) or re.match(r'^[\w+.-]+:', target):
             unresolved += 1
             emit('info', f'Unresolved {role} (dynamic/absolute/unsupported): {target}', source)
             return
@@ -120,13 +120,15 @@ def audit_paths(root, findings, *, routers=(), histories=(), execution=False):
         text = active_text(source.read_text(encoding='utf-8-sig', errors='replace'))
         if source.name in ('CONTEXT.md', 'CONTEXT-MAP.md') and classify_context_file(text) in ('glossary', 'glossary-index'):
             continue
-        section, depth, table_path = '', 0, None
+        section, depth, table_path, subgroup = '', 0, None, ''
         for line in text.splitlines():
             heading = HEADING.match(line)
             if heading:
-                if len(heading[1]) <= depth or not depth:
+                if not section.startswith('inputs') or len(heading[1]) <= depth:
                     section, depth = heading[2].lower(), len(heading[1])
-                    table_path = None
+                    table_path, subgroup = None, ''
+                else:
+                    subgroup = heading[2].lower()
                 continue
             in_inputs = section.startswith('inputs')
             tokens = []
@@ -142,9 +144,15 @@ def audit_paths(root, findings, *, routers=(), histories=(), execution=False):
                 tokens = [m[1] for m in LINK.finditer(line)] + TICK.findall(line)
                 if not tokens:
                     tokens = re.findall(r'(?:\.\.?/)?[\w./-]+\.[\w]+(?:#[\w-]+)?', line)
-            lower = line.lower()
+            if in_inputs and line.strip().startswith('|') and table_path is None and not re.fullmatch(r'[|\s:-]+', line):
+                unresolved += 1
+                emit('info', 'Input table has no recognized Path/File/Input column; inspect manually.', source)
+            if in_inputs and re.match(r'^\s*[-*+]\s', line) and not any(pathish(t) for t in tokens):
+                unresolved += 1
+                emit('info', 'Input has no explicit supported path; inspect manually.', source)
+            lower = subgroup + ' ' + line.lower()
             role = 'required input'
-            if 'optional' in lower:
+            if 'optional' in lower or 'as needed' in lower:
                 role = 'optional input'
             elif re.search(r'future|not.yet.produced|produced later|per.run', lower):
                 role = 'future input'

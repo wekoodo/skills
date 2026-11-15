@@ -25,6 +25,13 @@ class ValidationTests(unittest.TestCase):
         text=self.messages()
         self.assertIn('Missing required input: rules.md',text)
         self.assertIn('Missing required input: other.md',text)
+    def test_real_contract_title_and_nested_input_groups(self):
+        self.write('cycles/CONTEXT.md', '# Synthetic specialist\n\n## Identity\nTopic selected.\n\n## Inputs\n\n### Always load\n- `required.md`\n\n### Load as needed\n- `optional.md`\n\n## Process\nUse the inputs.\n## Outputs\n[future](future.md)\n')
+        text = self.messages()
+        self.assertIn('Missing required input: required.md', text)
+        self.assertNotIn('warn: Missing optional input', text)
+        self.assertNotIn('Missing route: future.md', text)
+
     def test_containing_file_base_not_root_fallback(self):
         self.write('rules.md','# Root\n')
         self.write('cycles/CONTEXT.md','## Inputs\n- Reference: `rules.md`\n')
@@ -36,6 +43,10 @@ class ValidationTests(unittest.TestCase):
         self.assertIn('warn: Missing working input: run.md',text)
         self.assertNotIn('warn: Missing future',text)
         self.assertNotIn('warn: Missing optional',text)
+    def test_unsupported_input_table_reported(self):
+        self.write('cycles/CONTEXT.md', '# Contract\n## Inputs\n| Resource | Read |\n|---|---|\n| Rule | prose only |\n')
+        self.assertIn('Input table has no recognized', self.messages())
+
     def test_anchors_url_encoding_duplicate_and_explicit(self):
         self.write('rules.md','# Hello, world!\n## Repeated\n## Repeated\n<a id="custom"></a>\n')
         self.write('CONTEXT.md','[a](rules.md#hello-world)\n[b](rules.md#repeated-1)\n[c](rules.md#custom)\n[d](rules.md#absent)\n[e](rules.md#hello%2Dworld)\n')
