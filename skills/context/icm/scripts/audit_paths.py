@@ -186,7 +186,8 @@ def audit_paths(root, findings, *, routers=(), histories=(), execution=False):
                 elif route_column is not None and len(cells) > route_column:
                     cell = cells[route_column]
                     if not LINK.search(cell) and not re.fullmatch(r'[-: ]+', cell):
-                        paths = TICK.findall(cell) or ([cell] if re.fullmatch(r'[\w./#%-]+', cell) else [])
+                        code_path = re.fullmatch(r'`([^`]+)`', cell)
+                        paths = [code_path[1]] if code_path else ([cell] if re.fullmatch(r'[\w./#%-]+', cell) else [])
                         for target in paths:
                             if pathish(target):
                                 check(source, target, historical=historical)

@@ -58,6 +58,12 @@ class ValidationTests(unittest.TestCase):
         self.assertIn('Missing route: other.md',text)
         self.assertIn('Routing cell is prose',text)
 
+    def test_layer_map_prose_is_not_an_executable_route(self):
+        self.write('CONTEXT.md', '# Router\n| Layer | Location |\n|---|---|\n| Control | None yet; add `stages/` only if needed |\n| Rules | `_config/`, each package has `references/` |\n')
+        text=self.messages()
+        self.assertNotIn('Missing route',text)
+        self.assertIn('Routing cell is prose',text)
+
     def test_unsupported_input_table_reported(self):
         self.write('cycles/CONTEXT.md', '# Contract\n## Inputs\n| Resource | Read |\n|---|---|\n| Rule | prose only |\n')
         self.assertIn('Input table has no recognized', self.messages())
