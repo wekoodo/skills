@@ -1,4 +1,4 @@
-# Read-only validation semantics (candidate 1.2)
+# Read-only validation semantics (1.2.0)
 
 Run `python -B <skill>/scripts/audit_routed_context.py <root> [--json]` with Python 3.10+. No repair, cache, gate, directory or report is written inside the target. JSON remains a list of level/message/path findings. Default exit 1 means structural failure (missing entrypoint or malformed native stage); path defects warn and preserve the prior warning exit behavior. `--strict` also exits 1 on warnings. `--execution` warns for missing required working inputs; combine with `--strict` to block execution mechanically. A zero exit is never complete ICM certification.
 

@@ -26,3 +26,9 @@ The roster pilot is **qualified compatibility evidence**, not a clean procedural
 The pilots exposed title/subheading input traversal and explanatory-path false positives; both were repaired with synthetic regressions before final reruns. Improved coverage reports dynamic, conditional and prose-scoped references honestly instead of silently counting them as validated. Unresolved counts are not resolved dependencies. No heuristic pass establishes semantic correctness, current review approval, private fact freshness or execution readiness. Existing stale engineering routing/status snippets were reported locally and left untouched.
 
 Profile/index write-back, real record execution, live applications, external consumers and migrations remain intentionally untested. These results authorize no rollout. Review #1–#3 and the draft PR; a subsequent explicit decision is needed before merge/release and one-consumer-at-a-time updates using the owner's existing recovery arrangements.
+
+## Release disposition — 2026-11-15
+
+After clarification, the owner authorized merge, closure and release as **ICM 1.2.0**, tagged **icm-v1.2.0**. The documented procedural exception is accepted for this release; it remains part of the historical evidence and is not an unresolved skill defect. The original consumer projects are not updated by this release.
+
+Finalization changes only the metadata version from 1.2 to 1.2.0 and release wording. The Python implementation and operating guidance remain the tested candidate. Existing regressions, 20 new synthetic tests and metadata validation were rerun for finalization. The earlier candidate-only completion boundary records the prior authorization; this disposition records the subsequent release decision.

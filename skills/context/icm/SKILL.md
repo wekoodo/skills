@@ -4,7 +4,7 @@ description: "Use when building, auditing, or maintaining a folder-based agent c
 license: MIT
 metadata:
   author: wekoodo
-  version: "1.2"
+  version: "1.2.0"
   based_on: "Jake Van Clief, David McDermott, Eduba (University of Edinburgh) — Interpretable Context Methodology, arXiv:2603.16021"
   paper: "https://arxiv.org/abs/2603.16021"
 ---
