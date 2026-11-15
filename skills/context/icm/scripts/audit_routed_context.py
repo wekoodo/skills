@@ -27,10 +27,14 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 import sys
 from dataclasses import dataclass
 from pathlib import Path
+
+sys.dont_write_bytecode = True  # Imported helpers must not create caches in an installed target.
+from audit_paths import active_text, audit_paths
 
 
 ENTRYPOINTS = [
@@ -41,7 +45,7 @@ ENTRYPOINTS = [
 ]
 ROUTERS = ["CONTEXT.md", "CONTEXT-MAP.md"]
 ALT_ROUTERS = ["docs/agents/routing.md", "docs/agents/task-map.md", "TASK-MAP.md"]
-STABLE_DIRS = ["_config", "shared", "references", "docs/agents", "docs/adr"]
+STABLE_DIRS = ["_shared", "_config", "shared", "references", "docs/agents", "docs/adr"]
 WORKING_DIRS = [
     "output",
     "outputs",
@@ -84,7 +88,7 @@ def rel(path: Path, root: Path) -> str:
 
 
 def existing(root: Path, candidates: list[str]) -> list[Path]:
-    return [root / candidate for candidate in candidates if (root / candidate).exists()]
+    return [root / candidate for candidate in candidates if (root / candidate).exists() and (root / candidate).resolve().is_relative_to(root)]
 
 
 def add(findings: list[Finding], level: str, message: str, path: Path | None = None, root: Path | None = None) -> None:
@@ -169,7 +173,7 @@ def numbered_members(directory: Path) -> list[Path]:
     """Direct child folders named NN-slug / NN_slug."""
     if not directory.is_dir():
         return []
-    return sorted(c for c in directory.iterdir() if c.is_dir() and NUMBERED_RE.match(c.name))
+    return sorted(c for c in directory.iterdir() if c.is_dir() and c.resolve().is_relative_to(directory.resolve()) and NUMBERED_RE.match(c.name))
 
 
 def find_libraries(root: Path) -> list[tuple[Path, list[Path]]]:
@@ -180,10 +184,10 @@ def find_libraries(root: Path) -> list[tuple[Path, list[Path]]]:
     """
     libraries: list[tuple[Path, list[Path]]] = []
     for child in sorted(p for p in root.iterdir() if p.is_dir()):
-        if child.name in SKIP_DIRS or child.name == "stages":
+        if child.name in SKIP_DIRS or child.name == "stages" or not child.resolve().is_relative_to(root):
             continue
         members = numbered_members(child)
-        if members:
+        if members and any((m / "CONTEXT.md").is_file() for m in members):
             libraries.append((child, members))
     return libraries
 
@@ -192,8 +196,9 @@ def has_recursive_routing(directory: Path) -> bool:
     """A CONTEXT.md nested below the top of a reference area (footnote-4 pattern)."""
     if not directory.is_dir():
         return False
-    for context in directory.rglob("CONTEXT.md"):
-        if context.parent != directory:
+    for base, dirs, files in os.walk(directory, followlinks=False):
+        dirs[:] = sorted(d for d in dirs if d not in SKIP_DIRS and not (Path(base)/d).is_symlink() and not getattr(Path(base)/d, "is_junction", lambda: False)())
+        if Path(base) != directory and "CONTEXT.md" in files:
             return True
     return False
 
@@ -204,7 +209,10 @@ def audit_stage(findings: list[Finding], stage: Path, root: Path) -> None:
         add(findings, "fail", "Stage is missing CONTEXT.md.", stage, root)
         return
 
-    text = context.read_text(encoding="utf-8")
+    if not context.resolve().is_relative_to(root):
+        add(findings, "info", "External stage contract not inspected.", context, root)
+        return
+    text = active_text(context.read_text(encoding="utf-8-sig"))
     headings = heading_names(text)
     missing = [name for name in ["Inputs", "Process", "Outputs"] if not has_heading(headings, name)]
     if missing:
@@ -216,24 +224,38 @@ def audit_stage(findings: list[Finding], stage: Path, root: Path) -> None:
         add(findings, "warn", "Inputs do not clearly mark Layer 3 reference material.", context, root)
     if not re.search(r"Layer\s*4|working", text, re.IGNORECASE):
         add(findings, "warn", "Inputs do not clearly mark Layer 4 working artifacts.", context, root)
-    if not has_heading(headings, "Verify"):
-        add(findings, "warn", "Stage has no Verify section. Add one for cross-stage alignment checks when useful.", context, root)
+    if not any(has_heading(headings, h) for h in ("Verify", "Check", "Review Gate")):
+        add(findings, "warn", "Stage has no Check, Review Gate, or Verify section; review behavior needs manual assessment.", context, root)
 
+    for name in ("Check", "Review Gate", "Verify"):
+        match = re.search(r"^##\s+" + name + r"[^\n]*(?:\n|$)(.*?)(?=^##\s|\Z)", text, re.M | re.S | re.I)
+        if match and not match[1].strip():
+            add(findings, "warn", f"Empty {name} section does not define review behavior.", context, root)
+    add(findings, "info", "Review actor, criteria, stop behavior and evidence freshness are untested; a heading or old pass marker is not authorization.", context, root)
     output = stage / "output"
     if output.exists() and output.is_dir():
-        add(findings, "ok", "Stage output/ review gate found.", output, root)
+        add(findings, "ok", "Stage output/ location found; this does not prove review passed.", output, root)
     else:
-        add(findings, "warn", "Stage has no output/ directory for reviewable handoffs.", stage, root)
+        add(findings, "warn", "No conventional output/ directory; assess the declared Outputs location (it may be future or alternate).", stage, root)
 
 
-def audit(root: Path) -> list[Finding]:
+def audit(root: Path, *, reference_areas=(), control_paths=(), routers=(), histories=(), execution=False) -> list[Finding]:
     root = root.resolve()
     findings: list[Finding] = []
 
-    if not root.exists():
+    if not root.is_dir():
         add(findings, "fail", "Project root does not exist.", root, root)
         return findings
 
+    def scoped(values):
+        result = []
+        for value in values:
+            if (root / value).resolve().is_relative_to(root):
+                result.append(value)
+            else:
+                add(findings, "info", f"Overlay outside root not inspected: {value}")
+        return result
+    reference_areas, control_paths, routers = map(scoped, (reference_areas, control_paths, routers))
     # Layer 0 / 1 / 3
     entrypoints = existing(root, ENTRYPOINTS)
     if entrypoints:
@@ -246,7 +268,7 @@ def audit(root: Path) -> list[Finding]:
     layer1: list[str] = []
     glossary_owned: list[Path] = []
     for candidate in existing(root, ROUTERS):
-        kind = classify_context_file(candidate.read_text(encoding="utf-8"))
+        kind = classify_context_file(active_text(candidate.read_text(encoding="utf-8-sig")))
         name = rel(candidate, root)
         if kind == "glossary":
             glossary_owned.append(candidate)
@@ -263,7 +285,7 @@ def audit(root: Path) -> list[Finding]:
             layer1.append(name)
 
     if not layer1:
-        layer1 = [rel(alt, root) for alt in existing(root, ALT_ROUTERS)]
+        layer1 = [rel(alt, root) for alt in existing(root, ALT_ROUTERS + list(routers))]
         section_host = routing_section_in_entrypoint(root)
         if section_host:
             layer1.append(f"routing section in {rel(section_host, root)}")
@@ -275,7 +297,7 @@ def audit(root: Path) -> list[Finding]:
     else:
         add(findings, "warn", "No Layer 1 router found. Add CONTEXT.md or CONTEXT-MAP.md when tasks need routed context.")
 
-    stable_dirs = existing(root, STABLE_DIRS)
+    stable_dirs = existing(root, STABLE_DIRS + list(reference_areas))
     stable_names = [rel(p, root) for p in stable_dirs] + [f"{rel(p, root)} (glossary)" for p in glossary_owned]
     if stable_names:
         add(findings, "ok", f"Layer 3 reference area found: {', '.join(stable_names)}.")
@@ -288,7 +310,7 @@ def audit(root: Path) -> list[Finding]:
     # Layer 2 shape A: a stages/ pipeline
     stages_root = root / "stages"
     has_pipeline = False
-    if stages_root.exists():
+    if stages_root.is_dir() and stages_root.resolve().is_relative_to(root):
         stage_dirs = sorted(p for p in stages_root.iterdir() if p.is_dir())
         numbered = [p for p in stage_dirs if NUMBERED_RE.match(p.name)]
         unnumbered = [p for p in stage_dirs if p not in numbered]
@@ -318,7 +340,7 @@ def audit(root: Path) -> list[Finding]:
         add(findings, "ok", f"Layer 4 working area found: {', '.join(rel(d, root) for d in working)}.")
 
     # Foreign control surface: multi-step execution owned by another pack.
-    control_surfaces = [d for name in CONTROL_SURFACES for d in [root / name] if d.is_dir() and any(d.iterdir())]
+    control_surfaces = [d for name in (CONTROL_SURFACES + list(control_paths)) for d in [root / name] if d.is_dir() and d.resolve().is_relative_to(root) and any(d.iterdir())]
 
     # Overall shape note -- only when NEITHER pipeline nor library is present.
     if not has_pipeline and not libraries:
@@ -349,6 +371,7 @@ def audit(root: Path) -> list[Finding]:
         mode, detail = "icm-native", "no foreign ownership detected"
     findings.insert(0, Finding(level="info", message=f"Coexistence mode: {mode} ({detail})."))
 
+    audit_paths(root, findings, routers=routers, histories=histories, execution=execution)
     return findings
 
 
@@ -356,9 +379,15 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Audit a routed Markdown context (ICM) architecture.")
     parser.add_argument("root", nargs="?", default=".", help="Project root to audit.")
     parser.add_argument("--json", action="store_true", help="Emit JSON findings.")
+    parser.add_argument("--reference-area", action="append", default=[], help="Project-relative stable area; repeatable.")
+    parser.add_argument("--control-surface", action="append", default=[], help="Project-relative existing control tree; repeatable.")
+    parser.add_argument("--router", action="append", default=[], help="Additional project-relative active routing file; repeatable.")
+    parser.add_argument("--history", action="append", default=[], help="Optional history file/directory, findings informational only.")
+    parser.add_argument("--execution", action="store_true", help="Warn on missing required working inputs too.")
+    parser.add_argument("--strict", action="store_true", help="Exit 1 on warnings as well as failures.")
     args = parser.parse_args()
 
-    findings = audit(Path(args.root))
+    findings = audit(Path(args.root), reference_areas=args.reference_area, control_paths=args.control_surface, routers=args.router, histories=args.history, execution=args.execution)
 
     if args.json:
         print(json.dumps([finding.__dict__ for finding in findings], indent=2))
@@ -367,7 +396,7 @@ def main() -> int:
             path = f" ({finding.path})" if finding.path else ""
             print(f"[{finding.level.upper()}] {finding.message}{path}")
 
-    return 1 if any(finding.level == "fail" for finding in findings) else 0
+    return 1 if any((finding.level == "fail" or (args.strict and finding.level == "warn")) for finding in findings) else 0
 
 
 if __name__ == "__main__":

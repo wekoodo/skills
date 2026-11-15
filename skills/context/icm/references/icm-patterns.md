@@ -188,7 +188,9 @@ Stop after writing the output. The human may edit `output/draft.md` before the n
 - Confirm all required sections from `references/structure.md` are present.
 ```
 
-`Verify` is optional, but useful for cross-stage trace checks and final alignment passes.
+`Check`, `Review Gate`, and `Verify` are equivalent only when their content defines the needed review. Specify who checks, what passes, what stops on failure, and where evidence belongs. For example: "The author checks that each claim traces to the current research and voice constraints. Stop on missing evidence; record unresolved claims beside the draft. A reviewer approves the current revision before handoff." Do not accept an empty heading or stale `check.md` as approval.
+
+Paths in Inputs are relative to the contract directory, including table cells and bullets. Name a required reference explicitly; label future per-run outputs and optional inputs. A working input not yet produced is structurally acceptable but blocks execution when required. Use `file.md#section-slug` for sections. See [validation.md](validation.md) for exact checker semantics and limits.
 
 ## Design Rules
 
@@ -278,3 +280,7 @@ Name the detected situation by shape, not by pack author:
 - Durable memory lives in the workspace, not a harness-private store.
 - Per-step delivered context stays roughly within the 2–8k token budget.
 - The layout can be copied, committed, and understood without a custom framework.
+
+## Read-only audit and walk test
+
+Follow [validation.md](validation.md). Preserve documented exceptions; a clean heuristic audit does not establish semantic correctness or completed review. Maintenance changes only the requested live contracts/routers; restructuring uses the migration workflow in SKILL.md.
