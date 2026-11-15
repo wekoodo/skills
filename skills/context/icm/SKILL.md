@@ -4,7 +4,7 @@ description: "Use when building, auditing, or maintaining a folder-based agent c
 license: MIT
 metadata:
   author: wekoodo
-  version: "1.1"
+  version: "1.2"
   based_on: "Jake Van Clief, David McDermott, Eduba (University of Edinburgh) — Interpretable Context Methodology, arXiv:2603.16021"
   paper: "https://arxiv.org/abs/2603.16021"
 ---
@@ -56,6 +56,10 @@ Deferral rules:
 
 Greenfield, or no foreign ownership detected: keep the paper-aligned layout (root `CONTEXT.md` router, optional `stages/`). See [icm-patterns.md](references/icm-patterns.md) § Coexistence Profiles for the mapping table; the audit script performs the same shape classification and reports the mode.
 
+## Operating mode
+
+Choose before editing: **audit** reads files and reports findings only; **maintenance** makes the requested bounded additions; **restructure** requires a concrete migration map and approval before moving anything. Loading an upgraded skill does not authorize consumer migrations. Preserve project overlays, historical records, canonical entrypoints and shims.
+
 ## Workflow
 
 ### 1. Explore existing context
@@ -99,9 +103,14 @@ Greenfield, or no foreign ownership detected: keep the paper-aligned layout (roo
 
 ### 6. Validate
 
-- Run `python <skill>/scripts/audit_routed_context.py <project-root>`. It recognizes pipelines, reference libraries, recursive routing, and Layer-4 areas; a complete library-only project audits clean. It classifies router- vs glossary-shaped context files and reports the coexistence mode — a foreign-owned but property-complete repo audits clean, an honest gap (e.g. glossary owns `CONTEXT.md` and no alternate router exists) is a warning.
-- Manually check: each stage has reviewable output, a scoped input list, no irrelevant context loading, and no hidden dependency on one model or harness.
-- If the project keeps project-specific ICM decisions in a committed reference file (e.g. `_config/shared/icm-conventions.md`), audit against it too.
+- Run `python -B <skill>/scripts/audit_routed_context.py <project-root>`. This is read-only, heuristic validation, not complete ICM certification. See [validation.md](references/validation.md) for path semantics, scan limits, overlays and optional execution/strict checks.
+- Review against the project's recorded ICM conventions; do not relabel declared roles to satisfy defaults. Equivalent Check, Review Gate and Verify contracts should name an actor, criterion, stop/failure behavior and evidence when appropriate. Neither a heading nor a directory proves a check passed. A pass must apply to the current inputs and outputs; stale evidence cannot authorize continuation.
+- Walk from the entrypoint to the task with scoped reads: identify the current state owner, relevant contract/inputs, output and check. Use a fresh context when supported, otherwise label it a manual simulation. Record loaded paths, decisions, gaps and exact diffs; don't claim fresh-session evidence from a warm session.
+- Re-audit after bounded maintenance, inspect the scoped diff, and confirm reruns make no edits. Report passed checks, warnings, failures and untested cases separately. Do not repair history or normalize layouts to manufacture a green result.
+
+### Restructuring only
+
+Before any moves, inventory the affected files and role ownership; map old/new paths and incoming references, including sibling projects, harness configs and external consumers (ask only where that dependency is unknown). Check case-folded destination collisions, Windows junctions/symlinks, hooks and automatic integrations. Agree on recovery using existing version control or owner-provided backups; do not mandate redundant backups or restore drills for disposable pilots. Present the concrete migration map for approval. After approval, copy, verify scoped content parity, update active referrers, then remove only superseded sources within the approved scope. Preserve immutable history and stable IDs. A successful audit alone is not migration parity evidence.
 
 ## Deliverable shape
 
@@ -120,3 +129,5 @@ Interpretable Context Methodology (ICM) was introduced by **Jake Van Clief**, **
 > https://arxiv.org/abs/2603.16021 · [PDF](https://arxiv.org/pdf/2603.16021)
 
 This skill is a practical packaging of that methodology for coding agents (workflow, audit checklist, and scripts). Credit for the method belongs to the paper authors. Extensions here (e.g. treating numbered roster libraries as Layer 3) are operational guidance built on top of their work — not a rebrand of it.
+
+Selected check, walk-test and migration ideas are adapted from [RinDig/icm-architect](https://github.com/RinDig/icm-architect/tree/8bc2f5610d3843b3ffa31a142effe6b6337fef3c), reviewed at that revision (upstream main unchanged on 2026-11-15). The validator is Wekoodo's implementation, not a vendored copy of upstream links.py. See [upstream MIT notice](references/upstream-license.txt).
