@@ -141,9 +141,22 @@ def audit_paths(root, findings, *, routers=(), histories=(), execution=False):
                     cell = cells[table_path]
                     tokens = [m[1] for m in LINK.finditer(cell)] or TICK.findall(cell) or [cell]
             elif in_inputs and re.match(r'^\s*[-*+]\s', line):
-                tokens = [m[1] for m in LINK.finditer(line)] + TICK.findall(line)
-                if not tokens:
-                    tokens = re.findall(r'(?:\.\.?/)?[\w./-]+\.[\w]+(?:#[\w-]+)?', line)
+                mentions = sorted([(m.start(), m[1]) for m in LINK.finditer(line)] + [(m.start(), m[1]) for m in TICK.finditer(line)])
+                if mentions:
+                    start, target = mentions[0]
+                    prefix = re.sub(r'^\s*[-*+]\s*', '', line[:start]).strip()
+                    if re.fullmatch(r'(?:(?:layer\s*[34]\s*)?(?:reference|working|required|optional|future)(?:\s*\([^)]*\))?)?\s*:?\s*', prefix, re.I):
+                        tokens = [target]
+                        if len(mentions) > 1:
+                            unresolved += 1
+                            emit('info', 'Additional input prose paths are not declarations; inspect scoped references manually.', source)
+                    else:
+                        unresolved += 1
+                        emit('info', 'Input path embedded in prose; base/requiredness needs manual review.', source)
+                else:
+                    bare = re.sub(r'^\s*[-*+]\s*(?:(?:Reference|Working|Required|Optional|Future):\s*)?', '', line, flags=re.I).strip()
+                    if re.fullmatch(r'[\w./#%-]+', bare) and pathish(bare):
+                        tokens = [bare]
             if in_inputs and line.strip().startswith('|') and table_path is None and not re.fullmatch(r'[|\s:-]+', line):
                 unresolved += 1
                 emit('info', 'Input table has no recognized Path/File/Input column; inspect manually.', source)

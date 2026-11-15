@@ -32,6 +32,14 @@ class ValidationTests(unittest.TestCase):
         self.assertNotIn('warn: Missing optional input', text)
         self.assertNotIn('Missing route: future.md', text)
 
+    def test_input_annotations_are_not_dependencies(self):
+        self.write('cycles/real.md', '# Rules\n')
+        self.write('cycles/CONTEXT.md', '# Contract\n## Inputs\n- Reference: `real.md` (do not load `unrelated/`)\n- The scoped owner has `state.md` and routed sections.\n')
+        text = self.messages()
+        self.assertNotIn('Missing required input', text)
+        self.assertIn('Additional input prose paths', text)
+        self.assertIn('base/requiredness needs manual review', text)
+
     def test_containing_file_base_not_root_fallback(self):
         self.write('rules.md','# Root\n')
         self.write('cycles/CONTEXT.md','## Inputs\n- Reference: `rules.md`\n')
