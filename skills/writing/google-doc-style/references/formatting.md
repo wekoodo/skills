@@ -36,9 +36,10 @@ Detailed rules distilled from the Google Developer Documentation Style Guide. "R
 
 ## Lists
 
-- Numbered lists when order matters; bulleted lists otherwise; term-definition pairs as a description list (in markdown, a bold run-in term).
-- Introduce every list with a complete sentence ending in a colon.
+- Numbered lists when order matters (steps, phases, priorities); bulleted lists for non-sequential items such as takeaways, options, or findings; term-definition pairs as a description list (in markdown, a bold run-in term).
+- Introduce every list with a complete sentence ending in a colon—unless an immediately preceding heading already provides full context. Use a period if material intervenes between the lead-in sentence and the list.
   - Rec: "Use the **Submit** button for any of the following purposes:" | Not: "Use the **Submit** button to:"
+- Keep each list item to one idea (typically one or two short sentences). Move items with three or more related attributes, multi-figure comparisons, or per-item citations into a table.
 - Capitalize the first word of each item. End items with a period unless they are single words, verbless fragments, or entirely code or link text.
 - Keep items grammatically parallel — same structure, same capitalization, same punctuation.
 - Run-in bold lead-ins: "**Term**: description in lowercase" (colon) or "**Term.** Description as a sentence." (period) — pick one pattern per list; never a dash.
@@ -63,7 +64,8 @@ Detailed rules distilled from the Google Developer Documentation Style Guide. "R
 
 ## Tables
 
-- Use a table only for genuinely two-dimensional data — each row needs two or more related values. One-dimensional data is a list.
+- Choose the container by data shape: use a bulleted or numbered list for single items, a description list (bold run-in terms) for pairs, and a table when each row has three or more related attributes or compares multiple figures across items. Never use a single-column table.
+- In figure- or citation-heavy summaries, state the takeaway in short prose and move exact metrics, dates, and per-row sources into a table (with a dedicated Source column) rather than cramming them into bullets.
 - Introduce a table with a sentence ("…as listed in the following table:").
 - Refer to tables as "the following table" or "the preceding table," never "the table below/above."
 - Column headers: sentence case, concise, no end punctuation. Sort rows in a logical or alphabetical order.
@@ -108,7 +110,7 @@ Detailed rules distilled from the Google Developer Documentation Style Guide. "R
 
 - Italicize a term only when introducing and defining it: "A *Clos network* is a multistage switching network."
 - Italicize words-as-words: "Use the word *and* instead."
-- Bold is for UI elements and run-in list lead-ins, not general emphasis. Use sparingly for genuinely critical emphasis.
+- Bold is only for UI elements and run-in list lead-ins—never for mid-sentence emphasis or highlighting numbers. Use italics sparingly when words alone cannot carry emphasis.
 
 ## Examples and example values
 

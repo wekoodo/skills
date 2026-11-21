@@ -93,29 +93,29 @@ When code itself uses a non-inclusive term, keep the literal term in code font a
 
 ## Usage notes
 
-- **data** — singular mass noun: "the data is."
-- **deprecate** — means "recommend against using," not "removed."
-- **dialog** — the UI element (never "dialog box" or "pop-up"); "dialogue" is human conversation.
-- **directory vs. folder** — directory in CLI contexts, folder in GUI.
-- **display** — transitive: "the window appears," never "the window displays."
-- **email** — never e-mail; not a verb.
-- **enter vs. type** — enter = get text in by any means; type = keystrokes.
-- **enable vs. turn on** — pick one per document and stick with it.
-- **API** — a whole API, never a single method.
-- **each** — individual items; not a synonym for "all."
-- **either** — exactly two choices.
-- **between vs. among** — between for distinct items (any number); among for a mass or group.
-- **if vs. whether** — whether for alternatives; keep "then" in if…then sentences.
-- **like vs. such as** — both fine; lists they introduce are non-exhaustive, so never add "etc."
-- **media type** — not MIME type.
-- **method** — in OO prose, don't also use it to mean "approach."
-- **OS** — fine unexpanded; so are AI, API, CPU, REST (never expand REST).
-- **page** — a console tab is a "page."
-- **select vs. choose** — select for UI elements; choose for decisions.
-- **they** — preferred singular gender-neutral pronoun, plural verb.
-- **typically** — fine for the normal case; don't open a sentence with it.
-- **user** — your reader's users only; the reader is "you."
-- **with (means)** — "use the tool to debug," not "debug with the tool"; "a phone that has 2 GB," not "with 2 GB."
+- **data**: singular mass noun ("the data is").
+- **deprecate**: means "recommend against using," not "removed."
+- **dialog**: the UI element (never "dialog box" or "pop-up"); "dialogue" is human conversation.
+- **directory vs. folder**: directory in CLI contexts, folder in GUI.
+- **display**: transitive ("the window appears," never "the window displays").
+- **email**: never e-mail; not a verb.
+- **enter vs. type**: enter = get text in by any means; type = keystrokes.
+- **enable vs. turn on**: pick one per document and stick with it.
+- **API**: a whole API, never a single method.
+- **each**: individual items; not a synonym for "all."
+- **either**: exactly two choices.
+- **between vs. among**: between for distinct items (any number); among for a mass or group.
+- **if vs. whether**: whether for alternatives; keep "then" in if…then sentences.
+- **like vs. such as**: both fine; lists they introduce are non-exhaustive, so never add "etc."
+- **media type**: not MIME type.
+- **method**: in OO prose, don't also use it to mean "approach."
+- **OS**: fine unexpanded; so are AI, API, CPU, REST (never expand REST).
+- **page**: a console tab is a "page."
+- **select vs. choose**: select for UI elements; choose for decisions.
+- **they**: preferred singular gender-neutral pronoun, plural verb.
+- **typically**: fine for the normal case; don't open a sentence with it.
+- **user**: your reader's users only; the reader is "you."
+- **with (means)**: "use the tool to debug," not "debug with the tool"; "a phone that has 2 GB," not "with 2 GB."
 
 ## Spelling and compounds
 
