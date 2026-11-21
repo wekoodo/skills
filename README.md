@@ -64,6 +64,10 @@ Make reader-facing prose follow the [Google Developer Documentation Style Guide]
 
 In benchmark runs, output written with the skill passed 96% of the guide's verifiable rules versus 63% without it.
 
+> **Changed in 1.2:** added a `Structure and scannability` section with a dense-versus-scannable example for figure- and citation-heavy summaries, aligned container selection (lists, bold run-in lead-ins, tables) and list lead-in exceptions with the upstream Google guide, tightened `Self-check` to catch dense bullets, stacked parentheticals, unordered numbered lists, and mid-sentence bolding, and fixed internal bold/dash contradictions across the skill files.
+
+> **Changed in 1.1:** hardened `Scope` boundaries to prevent auto-trigger leakage into code or agent contracts, distinguished invented sample values from real user-supplied facts, and added leakage checks to `Self-check`.
+
 Distilled from the Google Developer Documentation Style Guide, created by Google LLC and used under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
 
 ## Skill layout (skills.sh contract)
